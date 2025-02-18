@@ -1,26 +1,30 @@
 class Person:
     people = {}
 
-    def __init__(self, name: str, age: int) -> None:
+    def __init__(self, name: str, age: int, **kwargs) -> None:
         self.name = name
         self.age = age
+        if (wife := kwargs.get("wife")):
+            self.wife = wife
+        elif (husband := kwargs.get("husband")):
+            self.husband = husband
         Person.people[name] = self
 
 
 def create_person_list(people: list) -> list:
-    person_list = []
+    human_list = []
     for person in people:
-        person_list.append(Person(person["name"], person["age"]))
+        human_list.append(Person(
+            person["name"],
+            person["age"],
+            wife=person.get("wife"),
+            husband=person.get("husband")))
 
     for person in people:
-        if "wife" in person and person["wife"] is not None:
-            obj = Person.people[person["name"]]
-            wife = Person.people[person["wife"]]
-            obj.wife = wife
+        obj = Person.people.get(person.get("name"))
+        if (wife_name := person.get("wife")):
+            obj.wife = Person.people.get(wife_name)
+        elif (husband_name := person.get("husband")):
+            obj.husband = Person.people.get(husband_name)
 
-        elif "husband" in person and person["husband"] is not None:
-            obj = Person.people[person["name"]]
-            husband = Person.people[person["husband"]]
-            obj.husband = husband
-
-    return person_list
+    return human_list
